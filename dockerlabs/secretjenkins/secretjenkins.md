@@ -28,11 +28,12 @@ Usando nmap podremos escanear la red en busca de los servicios que tiene la maqu
 
 ```bash
 nmap -sV -p- 172.17.0.2 -Pn
+```
 
 - -sV: Detecta versiones de servicios
 - -Pn: No realiza ping a la máquina
 - -p-: Escanea todos los puertos
-```
+
 
 ![Escaneo de puertos](./imagenes/escaneo.png)
 
